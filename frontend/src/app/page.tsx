@@ -3,6 +3,7 @@ export default function Home() {
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-6 py-20">
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <div>
+          //test
           <span className="rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-sky-700">
             Student Management System
           </span>
