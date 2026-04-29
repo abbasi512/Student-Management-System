@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  GRADED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+}
+
+model User {
+  id              String           @id @default(cuid())
+  name            String
+  email           String           @unique
+  password        String
+  role            Role
+  avatar          String?
+  resetToken      String?
+  resetTokenExp   DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  studentProfile  StudentProfile?
+  teacherProfile  TeacherProfile?
+  enrollments     Enrollment[]
+  attendance      Attendance[]     @relation("AttendanceStudent")
+  markedAttendance Attendance[]    @relation("AttendanceMarker")
+  createdCourses  Course[]         @relation("CourseCreator")
+  teachingCourses Course[]         @relation("CourseTeacher")
+  assignments     Assignment[]     @relation("AssignmentTeacher")
+  submissions     Submission[]     @relation("SubmissionStudent")
+  gradesGiven     Grade[]          @relation("GradeTeacher")
+  gradesReceived  Grade[]          @relation("GradeStudent")
+  notifications   Notification[]
+}
+
+model StudentProfile {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  studentId        String    @unique
+  phone            String?
+  address          String?
+  dateOfBirth      DateTime?
+  bio              String?
+  gender           String?
+  nationality      String?
+  emergencyContact String?
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TeacherProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  employeeId     String   @unique
+  department     String?
+  phone          String?
+  bio            String?
+  qualification  String?
+  specialization String?
+  officeHours    String?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id            String        @id @default(cuid())
+  code          String        @unique
+  title         String
+  description   String
+  credits       Int
+  capacity      Int
+  createdById   String
+  teacherId     String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  createdBy     User          @relation("CourseCreator", fields: [createdById], references: [id])
+  teacher       User?         @relation("CourseTeacher", fields: [teacherId], references: [id])
+  enrollments   Enrollment[]
+  attendance    Attendance[]
+  assignments   Assignment[]
+}
+
+model Enrollment {
+  id         String   @id @default(cuid())
+  studentId  String
+  courseId   String
+  createdAt  DateTime @default(now())
+  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+}
+
+model Attendance {
+  id         String           @id @default(cuid())
+  studentId  String
+  courseId   String
+  date       DateTime
+  status     AttendanceStatus
+  markedById String
+  createdAt  DateTime         @default(now())
+  student    User             @relation("AttendanceStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  course     Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  markedBy   User             @relation("AttendanceMarker", fields: [markedById], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId, date])
+}
+
+model Assignment {
+  id           String       @id @default(cuid())
+  title        String
+  description  String
+  dueDate      DateTime
+  courseId     String
+  teacherId    String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  course       Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  teacher      User         @relation("AssignmentTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+  submissions  Submission[]
+}
+
+model Submission {
+  id            String           @id @default(cuid())
+  assignmentId  String
+  studentId     String
+  content       String
+  submittedAt   DateTime         @default(now())
+  status        SubmissionStatus @default(SUBMITTED)
+  assignment    Assignment       @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student       User             @relation("SubmissionStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  grade         Grade?
+
+  @@unique([assignmentId, studentId])
+}
+
+model Grade {
+  id            String      @id @default(cuid())
+  submissionId  String      @unique
+  studentId     String
+  teacherId     String
+  score         Float
+  feedback      String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  submission    Submission  @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  student       User        @relation("GradeStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  teacher       User        @relation("GradeTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
