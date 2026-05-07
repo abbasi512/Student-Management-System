@@ -1,0 +1,37 @@
+diff --git a/node_modules/@expo/metro-runtime/src/HMRClient.native.ts b/node_modules/@expo/metro-runtime/src/HMRClient.native.ts
+index 64c164e..f57634f 100644
+--- a/node_modules/@expo/metro-runtime/src/HMRClient.native.ts
++++ b/node_modules/@expo/metro-runtime/src/HMRClient.native.ts
+@@ -1,3 +1,4 @@
+-const HMRClient = require('react-native/Libraries/Utilities/HMRClient');
++const HMRClientModule = require('react-native/Libraries/Utilities/HMRClient');
++const HMRClient = HMRClientModule.default ?? HMRClientModule;
+ 
+ export default HMRClient;
+diff --git a/node_modules/@expo/metro-runtime/src/messageSocket.native.ts b/node_modules/@expo/metro-runtime/src/messageSocket.native.ts
+index 1d7c933..e03f886 100644
+--- a/node_modules/@expo/metro-runtime/src/messageSocket.native.ts
++++ b/node_modules/@expo/metro-runtime/src/messageSocket.native.ts
+@@ -1,7 +1,9 @@
+ /* eslint-env browser */
+ 
+ function createWebSocketConnection(path: string = '/message') {
+-  const getDevServer = require('react-native/Libraries/Core/Devtools/getDevServer');
++  const getDevServerModule = require('react-native/Libraries/Core/Devtools/getDevServer');
++  const getDevServer: () => { url: string; bundleLoadedFromServer: boolean } =
++    getDevServerModule.default ?? getDevServerModule;
+   const devServer = getDevServer();
+   if (!devServer.bundleLoadedFromServer) {
+     throw new Error('Cannot create devtools websocket connections in embedded environments.');
+@@ -9,8 +11,9 @@ function createWebSocketConnection(path: string = '/message') {
+ 
+   const devServerUrl = new URL(devServer.url);
+   const serverScheme = devServerUrl.protocol === 'https:' ? 'wss' : 'ws';
+-  const WebSocket = require('react-native/Libraries/WebSocket/WebSocket');
+-  return new WebSocket(`${serverScheme}://${devServerUrl.host}${path}`);
++  const WebSocketModule = require('react-native/Libraries/WebSocket/WebSocket');
++  const WebSocketClass: new (url: string) => any = WebSocketModule.default ?? WebSocketModule;
++  return new WebSocketClass(`${serverScheme}://${devServerUrl.host}${path}`);
+ }
+ 
+ createWebSocketConnection().onmessage = (message) => {

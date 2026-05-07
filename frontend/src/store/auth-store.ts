@@ -26,15 +26,16 @@ type AuthState = {
   logout: () => void;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: null,
   hydrated: false,
   setHydrated: (value) => set({ hydrated: value }),
   bootstrap: async () => {
-    if (typeof window === "undefined") {
-      return;
-    }
+    if (typeof window === "undefined") return;
+
+    // Already hydrated (e.g., right after login/signup) — skip the extra /users/me call
+    if (get().hydrated) return;
 
     const token = localStorage.getItem("sms_token");
 
@@ -54,13 +55,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (payload) => {
     const response = await api.post<AuthResponse>("/auth/login", payload);
     localStorage.setItem("sms_token", response.data.token);
-    set({ token: response.data.token, user: response.data.user });
+    set({ token: response.data.token, user: response.data.user, hydrated: true });
     return response.data;
   },
   signup: async (payload) => {
     const response = await api.post<AuthResponse>("/auth/signup", payload);
     localStorage.setItem("sms_token", response.data.token);
-    set({ token: response.data.token, user: response.data.user });
+    set({ token: response.data.token, user: response.data.user, hydrated: true });
     return response.data;
   },
   logout: () => {
@@ -68,6 +69,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.removeItem("sms_token");
     }
 
-    set({ user: null, token: null });
+    set({ user: null, token: null, hydrated: false });
   },
 }));

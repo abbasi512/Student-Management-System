@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "EduManage",
+    "slug": "sms-mobile",
+    "version": "1.0.0",
+    "scheme": "sms-mobile",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.edumanage.sms"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0ea5e9"
+      },
+      "package": "com.edumanage.sms"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

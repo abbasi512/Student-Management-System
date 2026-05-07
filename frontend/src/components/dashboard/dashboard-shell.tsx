@@ -165,7 +165,7 @@ function Avatar({
 
   return (
     <div
-      className={`flex items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 text-white font-bold ${textSize}`}
+      className={`flex items-center justify-center rounded-full bg-linear-to-br from-sky-500 to-indigo-600 text-white font-bold ${textSize}`}
       style={{ width: px, height: px, minWidth: px }}
     >
       {initials}
@@ -285,6 +285,9 @@ export function DashboardShell() {
   });
 
   const profileForm = useForm<z.infer<typeof profileSchema>>({ resolver: zodResolver(profileSchema) });
+  const profileFormRef = useRef(profileForm);
+  profileFormRef.current = profileForm;
+
   const courseForm = useForm<z.infer<typeof courseSchema>>({ resolver: zodResolver(courseSchema), defaultValues: { credits: 3, capacity: 30 } });
   const attendanceForm = useForm<z.infer<typeof attendanceSchema>>({ resolver: zodResolver(attendanceSchema) });
   const assignmentForm = useForm<z.infer<typeof assignmentSchema>>({ resolver: zodResolver(assignmentSchema) });
@@ -320,7 +323,7 @@ export function DashboardShell() {
       });
 
       const p = profile.data;
-      profileForm.reset({
+      profileFormRef.current.reset({
         name: p.name || "",
         phone: p.studentProfile?.phone || p.teacherProfile?.phone || "",
         address: p.studentProfile?.address || "",
@@ -335,7 +338,7 @@ export function DashboardShell() {
         officeHours: p.teacherProfile?.officeHours || "",
       });
     },
-    [profileForm],
+    [],
   );
 
   useEffect(() => {
@@ -882,7 +885,14 @@ export function DashboardShell() {
             )}
 
             <div className="flex items-center gap-3 pt-2">
-              <Button type="submit">Save Changes</Button>
+              <Button type="submit" disabled={profileForm.formState.isSubmitting}>
+                {profileForm.formState.isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Saving...
+                  </span>
+                ) : "Save Changes"}
+              </Button>
               <button
                 type="button"
                 onClick={() => profileForm.reset()}
@@ -1042,7 +1052,14 @@ export function DashboardShell() {
                 )}
               </div>
               <div className="flex gap-3">
-                <Button type="submit">Submit Assignment</Button>
+                <Button type="submit" disabled={submissionForm.formState.isSubmitting}>
+                  {submissionForm.formState.isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Submitting...
+                    </span>
+                  ) : "Submit Assignment"}
+                </Button>
                 <button
                   type="button"
                   onClick={() => { setSubmissionTarget(null); submissionForm.reset(); }}
@@ -1143,8 +1160,13 @@ export function DashboardShell() {
                 />
               </div>
               <div className="flex gap-3">
-                <Button type="submit">
-                  {gradeTarget.existingScore !== undefined ? "Update Grade" : "Submit Grade"}
+                <Button type="submit" disabled={gradeForm.formState.isSubmitting}>
+                  {gradeForm.formState.isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Saving...
+                    </span>
+                  ) : gradeTarget.existingScore !== undefined ? "Update Grade" : "Submit Grade"}
                 </Button>
                 <button
                   type="button"
@@ -1360,7 +1382,14 @@ export function DashboardShell() {
                 <option value="LATE">Late</option>
               </select>
             </div>
-            <Button type="submit" className="sm:col-span-2">Mark Attendance</Button>
+            <Button type="submit" className="sm:col-span-2" disabled={attendanceForm.formState.isSubmitting}>
+              {attendanceForm.formState.isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Saving...
+                </span>
+              ) : "Mark Attendance"}
+            </Button>
           </form>
         </Card>
       )}
@@ -1559,7 +1588,14 @@ export function DashboardShell() {
               </select>
             </div>
           )}
-          <Button type="submit" className="sm:col-span-2">Create Course</Button>
+          <Button type="submit" className="sm:col-span-2" disabled={courseForm.formState.isSubmitting}>
+            {courseForm.formState.isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Creating...
+              </span>
+            ) : "Create Course"}
+          </Button>
         </form>
       </Card>
 
@@ -1595,7 +1631,14 @@ export function DashboardShell() {
               ))}
             </select>
           </div>
-          <Button type="submit" className="sm:col-span-2">Create Assignment</Button>
+          <Button type="submit" className="sm:col-span-2" disabled={assignmentForm.formState.isSubmitting}>
+            {assignmentForm.formState.isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Creating...
+              </span>
+            ) : "Create Assignment"}
+          </Button>
         </form>
       </Card>
     </div>
@@ -1710,7 +1753,7 @@ export function DashboardShell() {
       >
         {/* Brand */}
         <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-indigo-600">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-sky-500 to-indigo-600">
             <GraduationCap className="h-4 w-4 text-white" />
           </div>
           <span className="font-bold text-slate-900">SMS Portal</span>
