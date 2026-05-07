@@ -59,9 +59,9 @@ export default function DashboardScreen() {
   const quickActions: QuickAction[] = [
     { label: "Courses", icon: "book-outline", color: "#0ea5e9", href: "/(app)/courses" },
     { label: "Assignments", icon: "clipboard-outline", color: "#8b5cf6", href: "/(app)/assignments" },
-    { label: "Notifications", icon: "notifications-outline", color: "#f59e0b", href: "/(app)/notifications" },
+    { label: isStaff ? "Grade" : "Grades", icon: "star-outline", color: "#f59e0b", href: "/(app)/grades" },
+    { label: "Notifications", icon: "notifications-outline", color: "#ec4899", href: "/(app)/notifications" },
     ...(isStaff ? [{ label: "Attendance", icon: "calendar-outline", color: "#10b981", href: "/(app)/attendance" }] : []),
-    { label: "Profile", icon: "person-outline", color: "#ec4899", href: "/(app)/profile" },
   ];
 
   if (loading) return <LoadingState message="Loading dashboard..." />;
@@ -136,19 +136,19 @@ export default function DashboardScreen() {
           )}
 
           {/* Quick Actions */}
-          <View style={{ backgroundColor: "#fff", borderRadius: 20, padding: 16, marginBottom: 20, shadowColor: "#000", shadowOpacity: 0.06, shadowOffset: { width: 0, height: 2 }, shadowRadius: 8, elevation: 3 }}>
-            <Text style={{ fontSize: 16, fontWeight: "700", color: "#0f172a", marginBottom: 14 }}>Quick Actions</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
+          <View style={{ marginBottom: 20 }}>
+            <Text style={{ fontSize: 16, fontWeight: "700", color: "#0f172a", marginBottom: 12 }}>Quick Access</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
               {quickActions.map((a) => (
                 <TouchableOpacity
                   key={a.label}
                   onPress={() => router.push(a.href as any)}
-                  style={{ width: "30%", alignItems: "center", padding: 12, borderRadius: 14, backgroundColor: "#f8fafc", borderWidth: 1, borderColor: "#f1f5f9" }}
+                  style={{ width: "47%", flexDirection: "row", alignItems: "center", padding: 16, borderRadius: 16, backgroundColor: "#fff", shadowColor: "#000", shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 6, elevation: 2 }}
                 >
-                  <View style={{ width: 40, height: 40, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: a.color + "20", marginBottom: 6 }}>
-                    <Ionicons name={a.icon as any} size={20} color={a.color} />
+                  <View style={{ width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: a.color + "18", marginRight: 12 }}>
+                    <Ionicons name={a.icon as any} size={22} color={a.color} />
                   </View>
-                  <Text style={{ fontSize: 11, fontWeight: "600", color: "#475569", textAlign: "center" }}>{a.label}</Text>
+                  <Text style={{ fontSize: 14, fontWeight: "700", color: "#0f172a" }}>{a.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>

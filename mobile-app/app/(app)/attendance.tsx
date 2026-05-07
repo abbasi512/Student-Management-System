@@ -142,7 +142,7 @@ export default function AttendanceScreen() {
           <View style={{ paddingHorizontal: 16 }}>
             {/* Header info */}
             <View style={{ backgroundColor: "#fff", borderRadius: 18, padding: 16, marginBottom: 14, shadowColor: "#000", shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 8, elevation: 3 }}>
-              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0f172a" }}>{selectedCourse.name}</Text>
+              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0f172a" }}>{selectedCourse.title}</Text>
               <Text style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>
                 {new Date(date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
               </Text>

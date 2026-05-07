@@ -52,7 +52,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     await SecureStore.deleteItemAsync(TOKEN_KEY).catch(() => null);
-    set({ user: null, token: null, hydrated: false });
+    // Keep hydrated: true so the app layout immediately redirects to signin
+    // instead of flickering through the null state and crashing navigation
+    set({ user: null, token: null, hydrated: true });
   },
 
   setUser: (user) => set({ user }),

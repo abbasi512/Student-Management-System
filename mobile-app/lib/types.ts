@@ -40,16 +40,24 @@ export type AuthResponse = {
 export type Course = {
   id: string;
   code: string;
-  name: string;
+  title: string;
   description?: string | null;
   credits: number;
-  schedule?: string | null;
-  location?: string | null;
   capacity: number;
-  isActive: boolean;
-  teacher?: { name: string; email: string } | null;
+  teacher?: { id?: string; name: string; email: string } | null;
   _count?: { enrollments: number; assignments: number };
   isEnrolled?: boolean;
+};
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  avatar?: string | null;
+  createdAt: string;
+  studentProfile?: StudentProfile | null;
+  teacherProfile?: TeacherProfile | null;
 };
 
 export type Submission = {
